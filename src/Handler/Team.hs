@@ -22,11 +22,11 @@ getTeamR year = do
     year <- runDB $ getContent year
 
     case year of
-        Just (Year html _) ->
+        Just (Year text _) ->
            defaultLayout $ (do
                setTitle "Java Like its Hot #16553"
                aDomId <- newIdent
-               toWidget html)
+               toWidget (preEscapedToMarkup text))
         _ -> defaultLayout [whamlet|404 bad argument|]
 
 

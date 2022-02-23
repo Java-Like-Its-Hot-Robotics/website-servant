@@ -2,6 +2,6 @@
 -- Syntax for this file here: https://github.com/yesodweb/persistent/blob/master/docs/Persistent-entity-syntax.md
 
 Year
-    content Html
+    content Text
     endYear Int
     Date endYear
