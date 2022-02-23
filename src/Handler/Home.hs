@@ -24,14 +24,22 @@ data FileForm = FileForm
 -- inclined, or create a single monolithic file.
 getHomeR :: Handler Html
 getHomeR = do
-    (formWidget, formEnctype) <- generateFormPost sampleForm
     let submission = Nothing :: Maybe FileForm
         handlerName = "getHomeR" :: Text
+    year <- runDB getContent
 
-    defaultLayout $ do
-        aDomId <- newIdent
-        setTitle "Welcome To Yesod!"
-        $(widgetFile "homepage")
+    redirect (TeamR $ coerce year)
+    -- defaultLayout $ do
+    --     aDomId <- newIdent
+    --     setTitle "Welcome To Yesod!"
+    --     sendFile typeHtml "templates/homepagePlain.html"
+        -- $(widgetFile "homepage")
+getContent :: DB Int
+getContent = do
+    content <- selectList [] [LimitTo 1] --[OffsetBy $ coerce year]
+    case content of
+        [Entity _ (Year content endyear)] -> pure endyear
+        _ -> pure undefined
 
 postHomeR :: Handler Html
 postHomeR = do
@@ -44,7 +52,8 @@ postHomeR = do
     defaultLayout $ do
         aDomId <- newIdent
         setTitle "Welcome To Yesod!"
-        $(widgetFile "homepage")
+        sendFile typeHtml "templates/homepagePlain.html"
+        -- $(widgetFile "homepage")
 
 sampleForm :: Form FileForm
 sampleForm = renderBootstrap3 BootstrapBasicForm $ FileForm

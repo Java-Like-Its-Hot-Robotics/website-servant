@@ -11,6 +11,7 @@ module Handler.Team where
 import Import
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 import Text.Julius (RawJS (..))
+import qualified Data.Text.IO as T (readFile)
 
 
 type PageYear = Natural
@@ -22,11 +23,15 @@ getTeamR year = do
     year <- runDB $ getContent year
 
     case year of
-        Just (Year text _) ->
-           defaultLayout $ (do
+        Just (Year filename _) ->
+            defaultLayout $ do
                setTitle "Java Like its Hot #16553"
                aDomId <- newIdent
-               toWidget (preEscapedToMarkup text))
+               content <- liftIO $ T.readFile $ unpack (filename <> ".html")
+               let html = preEscapedToMarkup content
+               toWidget html
+            --    sendFile typeHtml $ unpack (filename <> ".html")
+            --    toWidget (preEscapedToMarkup html))
         _ -> defaultLayout [whamlet|404 bad argument|]
 
 
